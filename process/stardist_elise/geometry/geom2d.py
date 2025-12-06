@@ -8,7 +8,10 @@ from csbdeep.utils import _raise
 
 from ..utils import path_absolute, _is_power_of_2, _normalize_grid
 from ..matching import _check_label_array
-from ..lib.stardist2d import c_star_dist
+try:
+    from ..lib.stardist2d import c_star_dist
+except ImportError:
+    c_star_dist = None
 
 def _ocl_star_dist(lbl, n_rays=32, grid=(1,1)):
     from gputools import OCLProgram, OCLArray, OCLImage
@@ -69,6 +72,10 @@ def star_dist(a, n_rays=32, grid=(1,1), mode='cpp'):
     """'a' assumbed to be a label image with integer values that encode object ids. id 0 denotes background."""
 
     n_rays >= 3 or _raise(ValueError("need 'n_rays' >= 3"))
+
+    if mode == 'cpp' and c_star_dist is None:
+        print("Warning: C++ extension not found, falling back to Python implementation")
+        mode = 'python'
 
     if mode == 'python':
         return _py_star_dist(a, n_rays, grid=grid)

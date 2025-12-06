@@ -1,8 +1,9 @@
 import ctypes
 import os
 def hide_console():
-    ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-    os.system("echo off")
+    if os.name == 'nt':
+        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+        os.system("echo off")
 hide_console()
 import OS_Manager
 from PySide6.QtTest import QTest
@@ -24,8 +25,8 @@ from OS_Density import comput_density_stats
 demo_im_fold = Path("images")
 info_dict = {"models": {}}
 
-if Path(r"models\models_info.json").exists():
-    with open(r"models\models_info.json", 'r') as json_file:
+if Path("models/models_info.json").exists():
+    with open("models/models_info.json", 'r') as json_file:
         info_dict = json.load(json_file)
 
 
@@ -754,4 +755,4 @@ update_NX_UI()
 update_OPW_UI()
 connect_apps()
 start()
-OPW.window.server_thread.stop() 
+OPW.window.server_thread.stop()

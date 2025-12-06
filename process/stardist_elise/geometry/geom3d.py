@@ -8,8 +8,13 @@ from tqdm import tqdm
 
 from ..utils import path_absolute, _normalize_grid
 from ..matching import _check_label_array
-from ..lib.stardist3d import c_star_dist3d, c_polyhedron_to_label, c_dist_to_volume, c_dist_to_centroid
-from ..lib.stardist3d import c_star_dist3d, c_polyhedron_to_label
+try:
+    from ..lib.stardist3d import c_star_dist3d, c_polyhedron_to_label, c_dist_to_volume, c_dist_to_centroid
+except ImportError:
+    c_star_dist3d = None
+    c_polyhedron_to_label = None
+    c_dist_to_volume = None
+    c_dist_to_centroid = None
 
 
 
@@ -87,6 +92,10 @@ def star_dist3D(lbl, rays, grid=(1,1,1), mode='cpp'):
     """lbl assumbed to be a label image with integer values that encode object ids. id 0 denotes background."""
 
     grid = _normalize_grid(grid,3)
+    if mode == 'cpp' and c_star_dist3d is None:
+        print("Warning: C++ extension not found, falling back to Python implementation")
+        mode = 'python'
+
     if mode == 'python':
         return _py_star_dist3D(lbl, rays, grid=grid)
     elif mode == 'cpp':

@@ -17,6 +17,7 @@
    may produce a warning about throwing an error from C code.
 */
 
+#include <cstdio>
 #include <stdarg.h>
 #include <stdexcept>
 #include <stdlib.h>
